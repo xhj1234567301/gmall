@@ -3,6 +3,8 @@ package com.atguigu.gmall.product.service;
 import com.atguigu.gmall.model.product.BaseTrademark;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author 懒羊
 * @description 针对表【base_trademark(品牌表)】的数据库操作Service

@@ -25,11 +25,6 @@ public class CategoryController {
     @Autowired
     BaseCategory3Service baseCategory3Service;
 
-    @Autowired
-    BaseAttrInfoService baseAttrInfoService;
-
-    @Autowired
-    BaseAttrValueService baseAttrValueService;
 
 
     /**
@@ -65,41 +60,8 @@ public class CategoryController {
         return Result.ok(category3List);
     }
 
-    /**
-     * 根据分类id获取平台属性
-     * @param category1Id
-     * @param category2Id
-     * @param category3Id
-     * @return
-     */
-    @GetMapping("/attrInfoList/{category1Id}/{category2Id}/{category3Id}")
-    public Result attrInfoList(@PathVariable("category1Id")Long category1Id,
-                               @PathVariable("category2Id")Long category2Id,
-                               @PathVariable("category3Id")Long category3Id){
-        List<BaseAttrInfo> attrInfoList= baseAttrInfoService.attrInfoList(category1Id,category2Id,category3Id);
-        return Result.ok(attrInfoList);
-    }
 
-    /**
-     * 添加平台属性 / 修改平台属性
-     * @return
-     */
-    @PostMapping("/saveAttrInfo")
-    public Result saveAttrInfo(@RequestBody BaseAttrInfo baseAttrInfo){
-        baseAttrInfoService.saveAttrInfo(baseAttrInfo);
-        return Result.ok();
-    }
 
-    /**
-     * 根据平台属性ID获取平台属性对象数据
-     * @param attrId
-     * @return
-     */
-    @GetMapping("/getAttrValueList/{attrId}")
-    public Result getAttrValueList(@PathVariable("attrId") Long attrId){
-        List<BaseAttrValue> baseAttrValueList = baseAttrValueService.getAttrValueList(attrId);
-        return Result.ok(baseAttrValueList);
-    }
 
 
 }

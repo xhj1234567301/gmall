@@ -25,19 +25,7 @@ public class BaseAttrInfoServiceImpl extends ServiceImpl<BaseAttrInfoMapper, Bas
     @Override
     public List<BaseAttrInfo> attrInfoList(Long category1Id, Long category2Id, Long category3Id) {
 
-        QueryWrapper<BaseAttrInfo> queryWrapper = new QueryWrapper<>();
-
-        if (category1Id != 0){
-            queryWrapper.eq("category_id",category1Id).eq("category_level",1);
-        }
-        if (category2Id != 0){
-            queryWrapper.eq("category_id",category2Id).eq("category_level",2);
-        }
-        if (category3Id != 0){
-            queryWrapper.eq("category_id",category3Id).eq("category_level",3);
-        }
-
-        List<BaseAttrInfo> baseAttrInfos = baseAttrInfoMapper.selectList(queryWrapper);
+        List<BaseAttrInfo> baseAttrInfos = baseAttrInfoMapper.getAttrInfoLis(category1Id,category2Id,category3Id);
         return baseAttrInfos;
     }
 

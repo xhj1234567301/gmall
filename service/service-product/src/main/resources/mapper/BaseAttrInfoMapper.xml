@@ -15,4 +15,32 @@
         id,attr_name,category_id,
         category_level
     </sql>
+
+<!--    自定义映射-->
+    <resultMap id="AttrInfoAndValue"
+               type="com.atguigu.gmall.model.product.BaseAttrInfo"
+               autoMapping="true">
+        <id column="id" property="id"></id>
+        <collection property="attrValueList"
+                    ofType="com.atguigu.gmall.model.product.BaseAttrValue"
+                    autoMapping="true">
+            <id column="v_id" property="id"></id>
+        </collection>
+    </resultMap>
+
+    <select id="getAttrInfoLis" resultType="com.atguigu.gmall.model.product.BaseAttrInfo">
+        select bai.*, bav.id vid, bav.value_name, bav.attr_id
+        from  base_attr_info bai
+        left join base_attr_value bav on bai.id = bav.attr_id
+        where
+             <if test="category1Id != 0">
+                (bai.category_id=#{category1Id} and bai.category_level=1)
+             </if>
+            <if test="category2Id != 0" >
+                or (bai.category_id=#{category2Id} and bai.category_level=2)
+            </if>
+            <if test="category3Id != 0">
+                or (bai.category_id=#{category3Id} and bai.category_level=3)
+            </if>
+    </select>
 </mapper>
