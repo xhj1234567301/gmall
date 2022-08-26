@@ -3,6 +3,7 @@ package com.atguigu.gmall.product.controller;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.service.*;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @Author: LAZY
  * @Date: 2022/08/22/2022/8/22
  */
+@Api(tags = "三级分类")
 @RequestMapping("/admin/product") //抽取公共路径
 @RestController
 public class CategoryController {

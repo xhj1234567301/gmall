@@ -11,9 +11,4 @@
             <result property="category3Id" column="category3_id" jdbcType="BIGINT"/>
             <result property="tmId" column="tm_id" jdbcType="BIGINT"/>
     </resultMap>
-
-    <sql id="Base_Column_List">
-        id,spu_name,description,
-        category3_id,tm_id
-    </sql>
 </mapper>

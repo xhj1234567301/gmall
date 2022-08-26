@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @Author: LAZY
  * @Date: 2022/08/23/2022/8/23
  */
+@EnableTransactionManagement
 @Configuration
 public class MyBatisPlusConfig {
 
