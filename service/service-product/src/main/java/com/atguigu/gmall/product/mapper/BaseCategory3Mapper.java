@@ -1,7 +1,11 @@
 package com.atguigu.gmall.product.mapper;
 
 import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.to.CategoryTreeTo;
+import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
 * @author 懒羊
@@ -11,6 +15,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface BaseCategory3Mapper extends BaseMapper<BaseCategory3> {
 
+    List<CategoryTreeTo> getCategoryTree();
+
+    CategoryViewTo getCategoryViewTo(Long category3Id);
 }
 
 
