@@ -62,6 +62,7 @@ public class SpuSaleAttrServiceImpl extends ServiceImpl<SpuSaleAttrMapper, SpuSa
         }
         //fastjson  springboot: jackson
         String json = Jsons.toStr(map);
+        System.out.println("json = " + json);
         return json;
     }
 }

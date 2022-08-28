@@ -38,6 +38,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Autowired
     SpuSaleAttrService spuSaleAttrService;
 
+    @Autowired
+    SkuSaleAttrValueService skuSaleAttrValueService;
+
     /**
      * 添加sku
      * @param skuInfo
@@ -67,6 +70,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
             skuSaleAttrValue.setSkuId(skuId);
             skuSaleAttrValue.setSpuId(skuInfo.getSpuId());
         }
+        skuSaleAttrValueService.saveBatch(skuSaleAttrValueList);
 
     }
 

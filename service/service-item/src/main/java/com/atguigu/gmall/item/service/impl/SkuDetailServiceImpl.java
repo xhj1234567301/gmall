@@ -77,11 +77,19 @@ public class SkuDetailServiceImpl implements SkuDetailService {
             skuDetailTo.setSpuSaleAttrList(saleAttrAndValueMarkSku);
         }, threadPoolExecutor);
 
+        //json
+        CompletableFuture<Void> skuValueJsonFuture = skuInfoFuture.thenAcceptAsync(skuInfo -> {
+            Result<String> skuValueJsonResult = skuDetailFeignClient.getSkuValueJson(skuInfo.getSpuId());
+            String skuValueJson = skuValueJsonResult.getData();
+            skuDetailTo.setValuesSkuJson(skuValueJson);
+        }, threadPoolExecutor);
+
         CompletableFuture.allOf(
                 skuImageListFuture,
                 priceResultFuture,
                 saleAttrFuture,
-                categoryFuture
+                categoryFuture,
+                skuValueJsonFuture
         ).join();
 
         return skuDetailTo;
