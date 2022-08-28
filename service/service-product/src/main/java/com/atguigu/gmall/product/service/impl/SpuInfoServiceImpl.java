@@ -41,7 +41,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo>
     public void saveSpuInfo(SpuInfo spuInfo) {
         //spu
         spuInfoMapper.insert(spuInfo);
-        Long spuId = spuInfo.getId();
+            Long spuId = spuInfo.getId();
 
         // 销售属性集合
         List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
@@ -54,7 +54,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo>
                     List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
                     for (SpuSaleAttrValue spuSaleAttrValue : spuSaleAttrValueList) {
                         spuSaleAttrValue.setSpuId(spuId);
-                        spuSaleAttrValue.setBaseSaleAttrId(spuSaleAttr.getId());
                         spuSaleAttrValue.setSaleAttrName(spuSaleAttr.getSaleAttrName());
                         spuSaleAttrValueService.save(spuSaleAttrValue);
                     }

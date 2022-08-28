@@ -1,9 +1,10 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.util.Jsons;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.atguigu.gmall.model.product.SpuSaleAttrValue;
+import com.atguigu.gmall.model.to.ValueSkuJsonTo;
 import com.atguigu.gmall.product.mapper.SpuSaleAttrValueMapper;
-import com.atguigu.gmall.product.service.SpuSaleAttrValueService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.product.service.SpuSaleAttrService;
@@ -11,7 +12,9 @@ import com.atguigu.gmall.product.mapper.SpuSaleAttrMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 懒羊
@@ -30,12 +33,7 @@ public class SpuSaleAttrServiceImpl extends ServiceImpl<SpuSaleAttrMapper, SpuSa
 
     @Override
     public List<SpuSaleAttr> getSpuSaleAttrList(String spuId) {
-        List<SpuSaleAttr> list = spuSaleAttrMapper.selectList(new QueryWrapper<SpuSaleAttr>().eq("spu_id", spuId));
-        for (SpuSaleAttr spuSaleAttr : list) {
-            QueryWrapper<SpuSaleAttrValue> queryWrapper = new QueryWrapper<SpuSaleAttrValue>().eq("spu_id", spuId).eq("base_sale_attr_id", spuSaleAttr.getBaseSaleAttrId());
-            List<SpuSaleAttrValue> spuSaleAttrValues = spuSaleAttrValueMapper.selectList(queryWrapper);
-            spuSaleAttr.setSpuSaleAttrValueList(spuSaleAttrValues);
-        }
+        List<SpuSaleAttr> list = spuSaleAttrMapper.getSaleAttrAndValueBySpuId(spuId);
         return list;
     }
 
@@ -43,6 +41,28 @@ public class SpuSaleAttrServiceImpl extends ServiceImpl<SpuSaleAttrMapper, SpuSa
     public List<SpuSaleAttr> getSaleAttrAndValueMarkSku(Long spuId, Long skuId) {
         List<SpuSaleAttr> list = spuSaleAttrMapper.getSaleAttrAndValueMarkSku(spuId,skuId);
         return list;
+    }
+
+    /**
+     * sku组合
+     * {"118|120":49,"119|121":50}
+     * @param spuId
+     * @return
+     */
+    @Override
+    public String getAllSkuSaleAttrValueJson(Long spuId) {
+        List<ValueSkuJsonTo> valueSkuJsonTos = spuSaleAttrMapper.getAllSkuValueJson(spuId);
+        // {"118|120":49,"119|121":50}
+        // StreamAPI  lambda；
+        Map<String,Long> map = new HashMap<>();
+        for (ValueSkuJsonTo valueSkuJsonTo :valueSkuJsonTos){
+            String valueJson = valueSkuJsonTo.getValueJson(); // 118|120
+            Long skuId = valueSkuJsonTo.getSkuId(); // 49
+            map.put(valueJson,skuId);
+        }
+        //fastjson  springboot: jackson
+        String json = Jsons.toStr(map);
+        return json;
     }
 }
 
