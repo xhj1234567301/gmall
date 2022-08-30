@@ -1,6 +1,7 @@
 package com.atguigu.gmall.item.service.impl;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.common.util.Jsons;
 import com.atguigu.gmall.item.feign.SkuDetailFeignClient;
 import com.atguigu.gmall.item.service.SkuDetailService;
 import com.atguigu.gmall.model.product.SkuImage;
@@ -9,12 +10,15 @@ import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.atguigu.gmall.model.to.SkuDetailTo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: LAZY
@@ -29,10 +33,61 @@ public class SkuDetailServiceImpl implements SkuDetailService {
     @Autowired
     ThreadPoolExecutor threadPoolExecutor;
 
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
+    /**
+     * 添加redis缓存 null（x）值缓存
+     * @param skuId
+     * @return
+     */
     @Override
-    public SkuDetailTo getSkuDetail(Long skuId) {
-//        Result<SkuDetailTo> skuDetail = skuDetailFeignClient.getSkuDetail(skuId);
-//        return skuDetail.getData();
+    public SkuDetailTo getSkuDetail(Long skuId){
+        String jsonStr = redisTemplate.opsForValue().get("sku:info:" + skuId);
+        //redis中没有 查到x 说明之前已经查过存x 防止再次回源
+        if ("x".equals(jsonStr)) {
+            return null;
+        }
+        if(StringUtils.isEmpty(jsonStr)) {
+            //从数据库中查
+            SkuDetailTo skuDetailRPC = getSkuDetailRPC(skuId);
+            //防止随机值穿透缓存
+            if (skuDetailRPC != null){
+                //放入缓存
+                redisTemplate.opsForValue().set("sku:info:"+ skuId,Jsons.toStr(skuDetailRPC),7, TimeUnit.DAYS);
+            }else {
+                redisTemplate.opsForValue().set("sku:info:"+ skuId,"x",30,TimeUnit.MINUTES);
+            }
+            //保存到redis
+            return skuDetailRPC;
+        }else {
+            return Jsons.toObj(jsonStr,SkuDetailTo.class);
+        }
+
+    }
+
+    /**
+     * 无法解决缓存穿透
+     * @param skuId
+     * @return
+     */
+    public SkuDetailTo getSkuDetail1(Long skuId){
+        String jsonStr = redisTemplate.opsForValue().get("sku:info:" + skuId);
+        //redis中没有
+        if (StringUtils.isEmpty(jsonStr)){
+            //从数据库中查
+            SkuDetailTo skuDetailRPC = getSkuDetailRPC(skuId);
+            //保存到redis
+            redisTemplate.opsForValue().set("sku:info:"+ skuId,Jsons.toStr(skuDetailRPC));
+            return skuDetailRPC;
+        }else {
+            return Jsons.toObj(jsonStr,SkuDetailTo.class);
+        }
+
+    }
+
+
+    public SkuDetailTo getSkuDetailRPC(Long skuId) {
 
         SkuDetailTo skuDetailTo = new SkuDetailTo();
 //        异步编排
@@ -94,4 +149,6 @@ public class SkuDetailServiceImpl implements SkuDetailService {
 
         return skuDetailTo;
     }
+
+
 }
