@@ -27,6 +27,11 @@ public class ItemController {
                        Model model){
         Result<SkuDetailTo> skuDetail = skuDetailFeignClient.getSkuDetail(skuId);
         if (skuDetail.isOk()){
+            SkuDetailTo data = skuDetail.getData();
+            if(data == null || data == null){
+                //说明远程没有查到商品
+                return "seckill/fail";
+            }
             SkuDetailTo skuDetailTo = skuDetail.getData();
             model.addAttribute("categoryView",skuDetailTo.getCategoryView());
             model.addAttribute("skuInfo",skuDetailTo.getSkuInfo());
