@@ -39,5 +39,5 @@ public interface CacheOpsService {
      * @param cacheKey
      * @param result
      */
-    void saveDate(String cacheKey, Object result);
+    void saveDate(String cacheKey, Object result, Long ttl);
 }

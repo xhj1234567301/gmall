@@ -66,7 +66,7 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     }
 
     @Override
-    public void saveDate(String cacheKey, Object result) {
+    public void saveDate(String cacheKey, Object result, Long ttl) {
         if (result == null){
             redisTemplate.opsForValue().set(cacheKey,
                     SysRedisConst.NULL_VAL,
@@ -77,7 +77,7 @@ public class CacheOpsServiceImpl implements CacheOpsService {
             redisTemplate.opsForValue().set(
                     cacheKey,
                     str,
-                    SysRedisConst.SKUDETAIL_TTL,
+                    ttl,
                     TimeUnit.SECONDS
             );
         }

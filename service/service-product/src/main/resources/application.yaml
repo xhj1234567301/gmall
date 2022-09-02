@@ -3,19 +3,21 @@ server:
 
 #数据源配置
 spring:
-  zipkin:
-    base-url: http://192.168.6.100:9411/
-    sender:
-      type: web
+  profiles:
+    include: sharding #包含其他的配置文件
+#  zipkin:
+#    base-url: http://192.168.6.100:9411/
+#    sender:
+#      type: web
 
   datasource:
     url: jdbc:mysql://192.168.6.100:3306/gmall_product?useSSL=false&characterEncoding=utf-8
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-  redis:
-    host: 192.168.6.100
-    password: xhj123456
+#  redis:
+#    host: 192.168.6.100
+#    password: xhj123456
 
 mybatis-plus:
   configuration:
