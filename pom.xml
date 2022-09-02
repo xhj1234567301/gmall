@@ -12,6 +12,7 @@
         <module>model</module>
         <module>server-gateway</module>
         <module>service</module>
+        <module>mall-cache-starters</module>
     </modules>
 
     <packaging>pom</packaging>

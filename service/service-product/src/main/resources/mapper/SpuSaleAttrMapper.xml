@@ -64,7 +64,7 @@
                      skuav.spu_id,
                      skuav.sale_attr_value_id,
                      ssav.base_sale_attr_id
-              from sku_info  si
+              from `sku_info`  si
                        left join sku_sale_attr_value skuav on si.id = skuav.sku_id
                        left join spu_sale_attr_value ssav on skuav.sale_attr_value_id = ssav.id
               WHERE si.spu_id=#{spuId} ORDER BY si.id,ssav.base_sale_attr_id,skuav.sale_attr_value_id) a

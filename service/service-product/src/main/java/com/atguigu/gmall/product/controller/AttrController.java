@@ -17,7 +17,7 @@ import java.util.List;
  * @Date: 2022/08/23/2022/8/23
  */
 
-@Api(tags = "库存管理")
+@Api(tags = "分类管理")
 @RequestMapping("/admin/product") //抽取公共路径
 @RestController
 public class AttrController {

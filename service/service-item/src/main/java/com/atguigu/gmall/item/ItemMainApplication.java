@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
  * @Author: LAZY
  * @Date: 2022/08/26/2022/8/26
  */
-@Import({RedissonAutoConfiguration.class})
+//@Import({RedissonAutoConfiguration.class})
 @EnableThreadPool
 @EnableFeignClients
 @SpringCloudApplication
