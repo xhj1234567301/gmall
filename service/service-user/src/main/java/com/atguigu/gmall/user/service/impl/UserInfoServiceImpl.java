@@ -42,7 +42,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             String token =  UUID.randomUUID().toString().replace("-", "");
             redisTemplate.opsForValue().set(SysRedisConst.LOGIN_USER+token, Jsons.toStr(user),7, TimeUnit.DAYS);
             vo.setToken(token);
-            vo.setNickName(userInfo.getNickName());
+            vo.setNickName(user.getNickName());
             return vo;
         }
 

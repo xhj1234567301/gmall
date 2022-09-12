@@ -78,4 +78,5 @@ public interface SkuProductFeignClient {
     @GetMapping("/category/tree")
     Result<List<CategoryTreeTo>> getCategoryTree();
 
+
 }

@@ -29,4 +29,28 @@ public class CartController {
 
         return "cart/addCart";
     }
+
+    /**
+     * 购物车列表页
+     * @return
+     */
+    @GetMapping("/cart.html")
+    public String cartHtml(){
+        return "cart/index";
+    }
+
+    /**
+     * 删除购物车中选中商品
+     * @return
+     */
+    @GetMapping("/cart/deleteChecked")
+    public String deleteChecked(){
+
+        /**
+         * redirect: 重定向
+         * forward: 转发
+         */
+        cartFeignClient.deleteChecked();
+        return "redirect:http://cart.gmall.com/cart.html";
+    }
 }

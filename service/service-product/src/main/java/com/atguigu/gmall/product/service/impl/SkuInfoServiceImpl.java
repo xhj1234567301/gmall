@@ -193,7 +193,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         goods.setCategory1Name(categoryViewTo.getCategory1Name());
         goods.setCategory2Id(categoryViewTo.getCategory2Id());
         goods.setCategory2Name(categoryViewTo.getCategory2Name());
-        goods.setCategory3Id(categoryViewTo.getCategory2Id());
+        goods.setCategory3Id(categoryViewTo.getCategory3Id());
         goods.setCategory3Name(categoryViewTo.getCategory3Name());
         goods.setHotScore(0L);//TODO 热度分更新
 

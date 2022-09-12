@@ -76,7 +76,7 @@ public class GlobalAuthFilter implements GlobalFilter {
                 //3.3、验证不通过 打去登录
                 if (userInfo!=null){
                     //Redis中有此用户。exchange里面的request的头会新增一个userid
-                    ServerWebExchange webExchange = userIdTransport(userInfo,exchange);
+                    ServerWebExchange webExchange = userIdOrTempIdTransport(userInfo,exchange);
                 }else {
                     //redis中无此用户【假令牌、token没有，没登录】
                     //打去登录
@@ -89,51 +89,71 @@ public class GlobalAuthFilter implements GlobalFilter {
 
         //其他请求
         String tokenValue = getTokenValue(exchange);
-        if (!StringUtils.isEmpty(tokenValue)) {
-            UserInfo info = getTokenUserInfo(tokenValue);
-            if (info != null) {
-                exchange = userIdTransport(info, exchange);
-            } else {
-                if (!StringUtils.isEmpty(tokenValue)) {
-                    //重定向到登录. 可以不带token,要带就得带正确
-                    return redirectToCustomPage(authUrlProperties.getLoginPage() + "?originUrl=" + uri, exchange);
-                }
-            }
+        UserInfo info = getTokenUserInfo(tokenValue);
+        // 假的请求
+        if (!StringUtils.isEmpty(tokenValue) && info == null) {
+            //重定向到登录. 可以不带token,要带就得带正确
+            return redirectToCustomPage(authUrlProperties.getLoginPage() + "?originUrl=" + uri, exchange);
         }
 
+        //普通请求 直接返回
+        exchange = userIdOrTempIdTransport(info, exchange);
 
 
         return chain.filter(exchange);
     }
 
     /**
-     * 用户id透传
+     * 用户id、临时id透传
      * exchange里面的request的头会新增一个userid
      * @param userInfo
      * @param exchange
      * @return
      */
-    private ServerWebExchange userIdTransport(UserInfo userInfo, ServerWebExchange exchange) {
+    private ServerWebExchange userIdOrTempIdTransport(UserInfo userInfo, ServerWebExchange exchange) {
         //请求一旦发来，所有的请求数据是固定的，不能进行任何修改，只能读取
 //        ServerHttpResponse response = exchange.getResponse();
 //        response.getHeaders().add("usrrId",userInfo.getId()+"");
 
+        //请求一旦发来，所有的请求数据是固定的，不能进行任何修改，只能读取
+        ServerHttpRequest.Builder newReqBuilder = exchange.getRequest().mutate();
+
+        // 用户登录
         if(userInfo != null){
             //封装一个新的请求
-            ServerHttpRequest newReq = exchange.getRequest()
-                    .mutate() //变异 讲request 转为一个新的
-                    .header(SysRedisConst.USERID_HEADER, userInfo.getId().toString()) //添加请求头
-                    .build();
-
-            //放行的时候改掉exchange
-            ServerWebExchange webExchange = exchange.mutate()
-                    .request(newReq)
-                    .response(exchange.getResponse())
-                    .build();
-            return webExchange;
+            newReqBuilder //变异 将request 转为一个新的
+                .header(SysRedisConst.USERID_HEADER, userInfo.getId().toString()); //添加请求头
         }
-        return exchange;
+        //用户未登录
+        String tempId = getUserTempId(exchange);
+        newReqBuilder.header(SysRedisConst.USERTEMPID_HEADER,tempId);
+        
+        //放行的时候改掉exchange
+        ServerWebExchange webExchange = exchange.mutate()
+                .request(newReqBuilder.build())
+                .response(exchange.getResponse())
+                .build();
+        return webExchange;
 
+    }
+
+    /**
+     * 获取未登录用户的临时id
+     * @param exchange
+     * @return
+     */
+    private String getUserTempId(ServerWebExchange exchange) {
+        ServerHttpRequest request = exchange.getRequest();
+        //tempId在请求头
+        String userTempId = request.getHeaders().getFirst("userTempId");
+        //请求头内不存在 在cooke内找
+        if (StringUtils.isEmpty(userTempId)) {
+            HttpCookie httpCookie = request.getCookies().getFirst("userTempId");
+            if (httpCookie != null){
+                userTempId = httpCookie.getValue();
+            }
+        }
+        return userTempId;
     }
 
     /**
@@ -175,15 +195,13 @@ public class GlobalAuthFilter implements GlobalFilter {
 
     private String getTokenValue(ServerWebExchange exchange) {
         String tokenStr = null;
-        ServerHttpRequest request = exchange.getRequest();
+        HttpCookie token = exchange.getRequest().getCookies().getFirst("token");
         //token在cookie
-        if (request.getCookies().containsKey("token")){
-            tokenStr = request.getCookies().getFirst("token").getValue();
+        if (token != null){
+            return token.getValue();
         }
         //token在请求头
-        if (request.getHeaders().containsKey("token")){
-            tokenStr = request.getHeaders().get("token").get(0);
-        }
+        tokenStr = exchange.getRequest().getHeaders().getFirst("token");
         return tokenStr;
     }
 

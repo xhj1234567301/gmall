@@ -26,4 +26,7 @@ public interface CartFeignClient {
                                      @RequestParam("num") Integer num);
 //  @RequestHeader(value = SysRedisConst.USERID_HEADER,required = false) String userId 隐藏
 
+    @GetMapping("/deleteChecked")
+    public Result deleteChecked();
+
 }
